@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CreatorPulse — All-in-One Multi-Platform Creator Analytics</title>
+  <meta name="description" content="Unified creator dashboard for YouTube, Instagram, and TikTok. Real-time subscriber tracking, cross-platform growth, and privacy-first local storage.">
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root {
+      --bg: #0B0E14;
+      --card-bg: #151922;
+      --card-hover: #1C222E;
+      --border: #232936;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --accent: #E11D48;
+      --accent-glow: rgba(225, 29, 72, 0.25);
+      --yt-red: #FF0000;
+      --ig-pink: #E1306C;
+      --tt-cyan: #00F2FE;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Navbar */
+    nav {
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 0;
+      position: sticky;
+      top: 0;
+      background: rgba(11, 14, 20, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+    .brand-pulse {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      display: inline-block;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      align-items: center;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+    .btn-nav {
+      background: var(--accent);
+      color: #FFFFFF !important;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .btn-nav:hover {
+      background: #BE123C;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.95rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: 3.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #FFFFFF 40%, #9CA3AF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.25rem; }
+      .nav-links { display: none; }
+    }
+    .hero p {
+      max-width: 680px;
+      margin: 0 auto 2.25rem;
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #FFFFFF;
+      font-weight: 600;
+      padding: 0.85rem 1.75rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover {
+      background: #BE123C;
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      padding: 0.85rem 1.75rem;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+    .btn-secondary:hover {
+      background: var(--card-hover);
+      text-decoration: none;
+    }
+
+    /* Platforms Section */
+    .section-title {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .section-title h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 0.5rem;
+    }
+    .section-title p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .platform-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .platform-card:hover {
+      transform: translateY(-4px);
+      border-color: #374151;
+    }
+    .platform-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .yt-icon { background: rgba(255, 0, 0, 0.15); color: var(--yt-red); }
+    .ig-icon { background: rgba(225, 48, 108, 0.15); color: var(--ig-pink); }
+    .tt-icon { background: rgba(0, 242, 254, 0.15); color: var(--tt-cyan); }
+    .platform-card h3 {
+      font-size: 1.35rem;
+      color: #FFFFFF;
+      margin-bottom: 0.5rem;
+    }
+    .platform-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .platform-card ul {
+      list-style: none;
+      color: #D1D5DB;
+      font-size: 0.9rem;
+    }
+    .platform-card li {
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .platform-card li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .pillar-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+    }
+    .pillar-card h4 {
+      color: #FFFFFF;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+    }
+    .pillar-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3.5rem 0 2rem;
+      margin-top: 5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 640px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    .footer-col h5 {
+      color: #FFFFFF;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin-bottom: 0.5rem;
+    }
+    .footer-col a {
+      color: var(--text-muted);
+    }
+    .footer-col a:hover {
+      color: #FFFFFF;
+    }
+    .legal-bar {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-pulse"></span>
+        CreatorPulse
+      </a>
+      <ul class="nav-links">
+        <li><a href="#platforms">Platforms</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+        <li><a href="mailto:creatorpulsetechnologies@gmail.com" class="btn-nav">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="container hero">
+    <div class="hero-badge">
+      <span>●</span> Official Android Release
+    </div>
+    <h1>The Multi-Platform Command Center for Digital Creators</h1>
+    <p>
+      Seamlessly monitor your audience growth, view velocity, and engagement across <strong>YouTube</strong>, <strong>Instagram</strong>, and <strong>TikTok</strong> in one unified, real-time dashboard.
+    </p>
+    <div class="hero-cta">
+      <a href="#platforms" class="btn-primary">Explore Supported Platforms</a>
+      <a href="privacy.html" class="btn-secondary">Privacy-First Architecture</a>
+    </div>
+  </header>
+
+  <!-- Platforms Section -->
+  <section id="platforms" class="container">
+    <div class="section-title">
+      <h2>All Your Channels in One Place</h2>
+      <p>Connect your creator profiles effortlessly with official APIs and public handle sync.</p>
+    </div>
+
+    <div class="platforms-grid">
+      <!-- YouTube -->
+      <div class="platform-card">
+        <div class="platform-icon-wrap yt-icon">YT</div>
+        <h3>YouTube</h3>
+        <p>Full channel intelligence with official Google Identity OAuth 2.0 authorization or public handle synchronization.</p>
+        <ul>
+          <li>Real-time subscriber counter</li>
+          <li>Total channel views & upload velocity</li>
+          <li>Playlist breakdown & video engagement</li>
+          <li>Official YouTube Data API v3 integration</li>
+        </ul>
+      </div>
+
+      <!-- Instagram -->
+      <div class="platform-card">
+        <div class="platform-icon-wrap ig-icon">IG</div>
+        <h3>Instagram</h3>
+        <p>Monitor your creator community, post reach, and profile growth without surrendering account passwords.</p>
+        <ul>
+          <li>Live follower count & post metrics</li>
+          <li>Engagement rate estimation</li>
+          <li>Recent post cadence tracking</li>
+          <li>Zero password or login collection</li>
+        </ul>
+      </div>
+
+      <!-- TikTok -->
+      <div class="platform-card">
+        <div class="platform-icon-wrap tt-icon">TT</div>
+        <h3>TikTok</h3>
+        <p>Track short-form video performance and viral trends with streamlined public metric monitoring.</p>
+        <ul>
+          <li>Follower & total like counters</li>
+          <li>Recent video view momentum</li>
+          <li>Milestone progression tracking</li>
+          <li>Private, client-side metric caching</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Features / Pillars -->
+  <section id="features" class="container">
+    <div class="section-title">
+      <h2>Engineered for Performance & Privacy</h2>
+      <p>Built with modern Android Jetpack Compose and local-first data architecture.</p>
+    </div>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <h4>🔒 100% Local Storage</h4>
+        <p>Zero remote tracking servers. All OAuth credentials, channel metrics, and histories remain private on your Android device.</p>
+      </div>
+      <div class="pillar-card">
+        <h4>⚡ Unified Overview</h4>
+        <p>See your combined cross-platform audience, total views, and net daily growth aggregated in a single glance.</p>
+      </div>
+      <div class="pillar-card">
+        <h4>🎯 Milestone Goals</h4>
+        <p>Set custom subscriber or follower targets with smart completion forecasting based on your authentic growth velocity.</p>
+      </div>
+      <div class="pillar-card">
+        <h4>⚔️ Content Faceoffs</h4>
+        <p>Compare two top-performing videos or posts head-to-head to dissect what resonates with your audience.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand" style="margin-bottom: 1rem;">
+            <span class="brand-pulse"></span>
+            CreatorPulse Technologies Ltd
+          </div>
+          <p>
+            Independent creator tools company registered in England and Wales (CRN: <strong>17561459</strong>). Registered office: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h5>Legal & Policies</h5>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></li>
+            <li><a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube Terms of Service</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Support & Contact</h5>
+          <ul>
+            <li><a href="mailto:creatorpulsetechnologies@gmail.com">creatorpulsetechnologies@gmail.com</a></li>
+            <li>Phone: +44 7893 931721</li>
+            <li>London, United Kingdom</li>
+          </ul>
+        </div>
+      </div>
+      <div class="legal-bar">
+        &copy; 2026 CreatorPulse Technologies Ltd. All rights reserved. CreatorPulse is not affiliated with, endorsed by, or sponsored by YouTube, Google LLC, Instagram, Meta Platforms, Inc., or TikTok / ByteDance Ltd.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
